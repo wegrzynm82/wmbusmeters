@@ -34,6 +34,9 @@
 #include<deque>
 #include<algorithm>
 
+LogThings log_telegrams_ {};
+time_t log_telegrams_start_time_;
+
 struct LinkModeInfo
 {
     LinkMode mode;
@@ -363,6 +366,36 @@ void Telegram::printTPL()
     }
 
     verbose("\n");
+}
+
+void Telegram::log()
+{
+    vector<uchar> logged = parsed;
+    if (!original.empty())
+    {
+        logged = vector<uchar>(parsed);
+        for (unsigned int i = 0; i < original.size(); i++)
+        {
+            logged[i] = original[i];
+        }
+    }
+    time_t diff = time(NULL)-log_telegrams_start_time_;
+    string parsed_hex = bin2hex(logged);
+    string header = parsed_hex.substr(0, header_size*2);
+    string content = parsed_hex.substr(header_size*2);
+    if (suffix_size == 0)
+    {
+        notice("telegram=|%s#%s|+%ld\n",
+               header.c_str(), content.c_str(), diff);
+    }
+    else
+    {
+        assert((suffix_size*2) < (int)content.size());
+        string content2 = content.substr(0, content.size()-suffix_size*2);
+        string suffix = content.substr(content.size()-suffix_size*2);
+        notice("telegram=|%s|%s|%s|+%ld\n",
+               header.c_str(), content2.c_str(), suffix.c_str(), diff);
+    }
 }
 
 // Store the hashes of the last 10 telegrams here.
@@ -5387,4 +5420,16 @@ int genericifyMedia(int media)
 bool isCloseEnough(int media1, int media2)
 {
     return genericifyMedia(media1) == genericifyMedia(media2);
+}
+
+bool shouldLogTelegram(Telegram &t, bool check_handled)
+{
+    return log_telegrams_ == LogThings::Always ||
+        (check_handled && t.handled && log_telegrams_ == LogThings::Unknown);
+}
+
+void logTelegramsMode(LogThings l)
+{
+    log_telegrams_ = l;
+    log_telegrams_start_time_ = time(NULL);
 }

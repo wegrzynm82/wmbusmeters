@@ -77,6 +77,12 @@ Add :verbose to any analyze to get more verbose analyze output.
 
 \fB\--logtelegrams\fR log the contents of the telegrams for easy replay
 
+\fB\--logtelegrams=\fR<what> log telegrams: never/always/unknown (unknown means telegrams from meters not specified in the config)
+
+\fB\--logsummary\fR print a summary for all telegrams, this is the same summary that is printed when no meter has been specified
+
+\fB\--logsummary=\fR<what> print a summary for telegrams: never/always/unknown (unknown means telegrams from meters not specified in the config)
+
 \fB\--logtimestamps=\fR<when> add timestamps to log entries: never/always/important
 
 \fB\--meterfiles=\fR<dir> store meter readings in dir
@@ -110,6 +116,9 @@ Add :verbose to any analyze to get more verbose analyze output.
 \fB\--usestderr\fR write notices/debug/verbose and other logging output to stderr (the default)
 
 \fB\--usestdoutforlogging\fR write debug/verbose and logging output to stdout
+
+\fB\--utf=\fR<what> what to do when wmbusmeters sees unknown telegram formats: log:CMD(...):date, a telegram format is unknown if
+the tuple: <len,c-field,(dll,ell,afl,tpl)-ver,(dll,ell,afl,tpl)-type> has not been seen before.
 
 \fB\--verbose\fR for more information
 

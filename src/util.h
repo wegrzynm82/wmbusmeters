@@ -97,19 +97,21 @@ enum class AddLogTimestamps
     NotSet, Never, Always, Important
 };
 
+enum class LogThings
+{
+    Never, Always, Unknown
+};
+
 void setLogTimestamps(AddLogTimestamps ts);
 void stderrEnabled(bool b);
-void logTelegramsEnabled(bool b);
 void internalTestingEnabled(bool b);
 bool isInternalTestingEnabled();
 
 bool isVerboseEnabled();
 bool isDebugEnabled();
-bool isLogTelegramsEnabled();
 
 void debugPayload(std::string intro, std::vector<uchar> &payload);
 void debugPayload(std::string intro, std::vector<uchar> &payload, std::vector<uchar>::iterator &pos);
-void logTelegram(std::vector<uchar> &original, std::vector<uchar> &parsed, int header_size, int suffix_size);
 
 enum class Alarm
 {

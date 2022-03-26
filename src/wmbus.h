@@ -494,7 +494,7 @@ struct Telegram
     void extractPayload(vector<uchar> *pl); // Extract frame data containing the measurements, after the header and not the suffix.
     void extractMfctData(vector<uchar> *pl); // Extract frame data after the DIF 0x0F.
 
-    bool handled {}; // Set to true, when a meter has accepted the telegram.
+    bool handled {}; // Set to true, when a specified meter has accepted the telegram.
 
     bool parseHeader(vector<uchar> &input_frame);
     bool parse(vector<uchar> &input_frame, MeterKeys *mk, bool warn);
@@ -509,6 +509,8 @@ struct Telegram
     bool parseHAN(vector<uchar> &input_frame, MeterKeys *mk, bool warn);
 
     void print();
+    // Print telegram=|....#....|+123 in the log.
+    void log();
 
     // A vector of indentations and explanations, to be printed
     // below the raw data bytes to explain the telegram content.
@@ -778,5 +780,8 @@ const char *mbusCiField(uchar ci_field);
 
 int genericifyMedia(int media);
 bool isCloseEnough(int media1, int media2);
+
+bool shouldLogTelegram(Telegram &t, bool check_handled);
+void logTelegramsMode(LogThings l);
 
 #endif

@@ -412,8 +412,11 @@ void handleOneshot(Configuration *c, string oneshot)
 
 void handleLogtelegrams(Configuration *c, string logtelegrams)
 {
-    if (logtelegrams == "true") { c->logtelegrams = true; }
-    else if (logtelegrams == "false") { c->logtelegrams = false;}
+    if (logtelegrams == "true") { c->logtelegrams = LogThings::Always; }
+    else if (logtelegrams == "false") { c->logtelegrams = LogThings::Never;}
+    else if (logtelegrams == "always") { c->logtelegrams = LogThings::Always; }
+    else if (logtelegrams == "never") { c->logtelegrams = LogThings::Never;}
+    else if (logtelegrams == "unknown") { c->logtelegrams = LogThings::Unknown;}
     else {
         warning("No such logtelegrams setting: \"%s\"\n", logtelegrams.c_str());
     }
@@ -421,8 +424,11 @@ void handleLogtelegrams(Configuration *c, string logtelegrams)
 
 void handleLogsummary(Configuration *c, string logsummary)
 {
-    if (logsummary == "true") { c->logsummary = true; }
-    else if (logsummary == "false") { c->logsummary = false;}
+    if (logsummary == "true") { c->logsummary = LogThings::Always; }
+    else if (logsummary == "false") { c->logsummary = LogThings::Never;}
+    else if (logsummary == "always") { c->logsummary = LogThings::Always; }
+    else if (logsummary == "never") { c->logsummary = LogThings::Never;}
+    else if (logsummary == "unknown") { c->logsummary = LogThings::Unknown;}
     else {
         warning("No such logsummary setting: \"%s\"\n", logsummary.c_str());
     }

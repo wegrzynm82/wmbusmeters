@@ -233,14 +233,52 @@ static shared_ptr<Configuration> parseNormalCommandLine(Configuration *c, int ar
             continue;
         }
         if (!strcmp(argv[i], "--logtelegrams")) {
-            c->logtelegrams = true;
+            c->logtelegrams = LogThings::Always;
             i++;
             continue;
         }
+        if (!strncmp(argv[i], "--logtelegrams=", 15))
+        {
+            if (!strcmp(argv[i]+15, "never"))
+            {
+                c->logtelegrams = LogThings::Never;
+            }
+            else if (!strcmp(argv[i]+15, "always"))
+            {
+                c->logtelegrams = LogThings::Always;
+            }
+            else if (!strcmp(argv[i]+15, "unknown"))
+            {
+                c->logtelegrams = LogThings::Unknown;
+            }
+            else
+            {
+                error("Unknown logtelegrams mode: \"%s\"\n", argv[i]+15);
+            }
+        }
         if (!strcmp(argv[i], "--logsummary")) {
-            c->logsummary = true;
+            c->logsummary = LogThings::Always;
             i++;
             continue;
+        }
+        if (!strncmp(argv[i], "--logsummary=", 13))
+        {
+            if (!strcmp(argv[i]+13, "never"))
+            {
+                c->logsummary = LogThings::Never;
+            }
+            else if (!strcmp(argv[i]+13, "always"))
+            {
+                c->logsummary = LogThings::Always;
+            }
+            else if (!strcmp(argv[i]+13, "unknown"))
+            {
+                c->logsummary = LogThings::Unknown;
+            }
+            else
+            {
+                error("Unknown logsummary mode: \"%s\"\n", argv[i]+13);
+            }
         }
         if (!strncmp(argv[i], "--format=", 9))
         {

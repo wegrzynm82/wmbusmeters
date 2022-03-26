@@ -353,7 +353,6 @@ bool debug_enabled_ = false;
 bool trace_enabled_ = false;
 AddLogTimestamps log_timestamps_ {};
 bool stderr_enabled_ = false;
-bool log_telegrams_enabled_ = false;
 bool internal_testing_enabled_ = false;
 
 string log_file_;
@@ -404,7 +403,6 @@ void debugEnabled(bool b) {
     debug_enabled_ = b;
     if (debug_enabled_) {
         verbose_enabled_ = true;
-        log_telegrams_enabled_ = true;
     }
 }
 
@@ -413,7 +411,6 @@ void traceEnabled(bool b) {
     if (trace_enabled_) {
         debug_enabled_ = b;
         verbose_enabled_ = true;
-        log_telegrams_enabled_ = true;
     }
 }
 
@@ -423,13 +420,6 @@ void setLogTimestamps(AddLogTimestamps ts) {
 
 void stderrEnabled(bool b) {
     stderr_enabled_ = b;
-}
-
-time_t telegrams_start_time_;
-
-void logTelegramsEnabled(bool b) {
-    log_telegrams_enabled_ = b;
-    telegrams_start_time_ = time(NULL);
 }
 
 void internalTestingEnabled(bool b)
@@ -448,10 +438,6 @@ bool isVerboseEnabled() {
 
 bool isDebugEnabled() {
     return debug_enabled_;
-}
-
-bool isLogTelegramsEnabled() {
-    return log_telegrams_enabled_;
 }
 
 void output_stuff(int syslog_level, bool use_timestamp, const char *fmt, va_list args)
@@ -991,39 +977,6 @@ void debugPayload(string intro, vector<uchar> &payload, vector<uchar>::iterator 
     {
         string msg = bin2hex(pos, payload.end(), 1024);
         debug("%s \"%s\"\n", intro.c_str(), msg.c_str());
-    }
-}
-
-void logTelegram(vector<uchar> &original, vector<uchar> &parsed, int header_size, int suffix_size)
-{
-    if (isLogTelegramsEnabled())
-    {
-        vector<uchar> logged = parsed;
-        if (!original.empty())
-        {
-            logged = vector<uchar>(parsed);
-            for (unsigned int i = 0; i < original.size(); i++)
-            {
-                logged[i] = original[i];
-            }
-        }
-        time_t diff = time(NULL)-telegrams_start_time_;
-        string parsed_hex = bin2hex(logged);
-        string header = parsed_hex.substr(0, header_size*2);
-        string content = parsed_hex.substr(header_size*2);
-        if (suffix_size == 0)
-        {
-            notice("telegram=|%s#%s|+%ld\n",
-                   header.c_str(), content.c_str(), diff);
-        }
-        else
-        {
-            assert((suffix_size*2) < (int)content.size());
-            string content2 = content.substr(0, content.size()-suffix_size*2);
-            string suffix = content.substr(content.size()-suffix_size*2);
-            notice("telegram=|%s|%s|%s|+%ld\n",
-                   header.c_str(), content2.c_str(), suffix.c_str(), diff);
-        }
     }
 }
 

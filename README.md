@@ -109,7 +109,7 @@ loglevel=normal
 device=auto:c1
 # But do not probe this serial tty.
 donotprobe=/dev/ttyACM2
-logtelegrams=false
+logtelegrams=never
 format=json
 meterfiles=/var/log/wmbusmeters/meter_readings
 meterfilesaction=overwrite
@@ -252,6 +252,9 @@ As {options} you can use:
     --listunits list all unit suffixes that can be used for typing values
     --logfile=<file> use this file for logging
     --logtelegrams log the contents of the telegrams for easy replay
+    --logtelegrams=<when> log telegrams: never/always/unknowns. To print the telegrams from unknown meters
+    --logsummary print a summary for all telegrams, this is the same summary that is printed when no meter has been specified
+    --logsummary=<when> print a summary for telegrams: never/always/unknowns, to print summaries for telegrams from unknown meters
     --logtimestamps=<when> add log timestamps: always never important
     --meterfiles=<dir> store meter readings in dir
     --meterfilesaction=(overwrite|append) overwrite or append to the meter readings file
@@ -270,6 +273,8 @@ As {options} you can use:
     --useconfig=<dir> load config files from dir/etc
     --usestderr write notices/debug/verbose and other logging output to stderr (the default)
     --usestdoutforlogging write debug/verbose and logging output to stdout
+    --utf=<what> what to do when wmbusmeters sees an Unknown Telegram Format, e.g. --utf=log:CMD(curl ...):2022-05-01
+    A telegram format is unknown if the tuple: <len,c-field,(dll,ell,afl,tpl)-ver,(dll,ell,afl,tpl)-type> has not been seen before.
     --verbose for more information
     --version print version
 ```

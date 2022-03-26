@@ -172,7 +172,7 @@ public:
         return true;
     }
 
-    bool hasMeters()
+    bool hasMetersOrTemplates()
     {
         return meters_.size() != 0 || meter_templates_.size() != 0;
     }
@@ -1620,9 +1620,7 @@ bool MeterCommonImplementation::handleTelegram(AboutTelegram &about, vector<ucha
         return false;
     }
 
-    char log_prefix[256];
-    snprintf(log_prefix, 255, "(%s) log", meterDriver().c_str());
-    logTelegram(t.original, t.frame, t.header_size, t.suffix_size);
+    t.log();
 
     // Invoke standardized field extractors!
     processFieldExtractors(&t);

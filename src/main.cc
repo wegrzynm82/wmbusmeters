@@ -467,7 +467,7 @@ bool start(Configuration *config)
     verboseEnabled(config->verbose);
     debugEnabled(config->debug);
     traceEnabled(config->trace);
-    logTelegramsEnabled(config->logtelegrams);
+    logTelegramsMode(config->logtelegrams);
 
     if (config->addtimestamps == AddLogTimestamps::NotSet)
     {
@@ -489,14 +489,6 @@ bool start(Configuration *config)
     // to achive a nice shutdown.
     onExit(call(serial_manager_.get(),stop));
 
-    /*
-    Detected d;
-    d.specified_device.file = "/dev/ttyUSB0";
-    d.found_file = "/dev/ttyUSB0";
-    d.specified_device.type = WMBusDeviceType::DEVICE_IU880B;
-
-    detectIU880B(&d, serial_manager_);
-*/
     // Create the printer object that knows how to translate
     // telegrams into json, fields that are written into log files
     // or sent to shell invocations.
@@ -560,7 +552,7 @@ bool start(Configuration *config)
     }
 
     bool stop_after_send = false;
-    if ((config->logsummary || !meter_manager_->hasMeters()) && serial_manager_->isRunning())
+    if ((config->logsummary != LogThings::Never || !meter_manager_->hasMetersOrTemplates()) && serial_manager_->isRunning())
     {
         if  (config->send_bus_content.size() != 0)
         {
@@ -568,7 +560,7 @@ bool start(Configuration *config)
         }
         else if (!config->analyze)
         {
-            if (!config->logsummary) notice("No meters configured. Printing id:s of all telegrams heard!\n");
+            if (config->logsummary == LogThings::Always) notice("No meters configured. Printing id:s of all telegrams heard!\n");
 
             meter_manager_->onTelegram([](AboutTelegram &about, vector<uchar> frame) {
                     Telegram t;
@@ -578,7 +570,7 @@ bool start(Configuration *config)
                     t.print();
                     string info = string("(")+toString(about.type)+")";
                     t.explainParse(info.c_str(), 0);
-                    logTelegram(t.original, t.frame, 0, 0);
+                    t.log();
                     return true;
                 });
         }
